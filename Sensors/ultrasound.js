@@ -5,12 +5,9 @@ const MICROSECDONDS_PER_CM = 1e6/34321;
 
 const trigger1 = new Gpio(23, {mode: Gpio.OUTPUT});
 const echo1 = new Gpio(24, {mode: Gpio.INPUT, alert: true});
-
-const trigger2 = new Gpio(17, {mode: Gpio.OUTPUT});
 const echo2 = new Gpio(27, {mode: Gpio.INPUT, alert: true});
 
 trigger1.digitalWrite(0); // Make sure trigger is low
-trigger2.digitalWrite(0);	
 
 const watchHCSR04 = () => {
   let startTick1;
@@ -42,5 +39,4 @@ watchHCSR04();
 // Trigger a distance measurement once per second
 setInterval(() => {
   trigger1.trigger(10, 1); // Set trigger high for 10 microseconds
-  trigger2.trigger(10, 1); // Set trigger high for 10 microseconds		
 }, 1000);
