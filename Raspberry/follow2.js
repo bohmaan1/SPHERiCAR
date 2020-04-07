@@ -16,7 +16,7 @@ const BUTTONS = {
 };
 
 // Initiera bollarna
-const boltNames = ["SB-5AEB"];
+const boltNames = ["SB-5AEB", "SB-AE48", "SB-048E", "SB-C7AA"];
 const numOfBolts = boltNames.length;
 var bolts = Array(numOfBolts);
 
