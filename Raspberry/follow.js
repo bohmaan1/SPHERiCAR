@@ -94,7 +94,7 @@ const watchHCSR04 = () => {
   }
   else  { 
   	 maxSpeed = 120; /* 1.2 must eventually change after testing */
-  }; 
+  } 
 
   if (right_sensors > left_sensors + 5) {
     for (var i = 0; i < 2; i++) {
@@ -112,7 +112,7 @@ const watchHCSR04 = () => {
     for (var i = 0; i < numOfBolts; i++) {
       if (bolts[i]) bolts[i].roll(maxSpeed, 0, []); 
     }	
-  };
+  }
 
 watchHCSR04();
 
@@ -120,3 +120,5 @@ watchHCSR04();
 setInterval(() => {
   trigger1.trigger(10, 1); // Set trigger high for 10 microseconds
 }, 1000);
+
+
