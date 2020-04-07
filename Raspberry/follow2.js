@@ -24,19 +24,16 @@ var bolts = Array(numOfBolts);
  * Max speed can be set to anything between 0 - 255.
  * Max speed of the Bolt is 2 m/s which should respond to value 255.
  */
-//const maxSpeed = 120;
+//const maxSpeed = 255;
 
 gamepad.on("down", async function(id, n) {
 	console.log("down", n);
 	
 	if (n == BUTTONS.CHANGE_VIEW) {
 		// Connect
-		console.log("test1") 
 		for (var i = 0; i < numOfBolts; i++) {
 			if (!bolts[i]) {
-				console.log("test2") 
 				bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
-				console.log("test3") 
 			}
 			// bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
 		}
@@ -84,19 +81,25 @@ const watchHCSR04 = () => {
       const diff1 = (endTick1 >> 0) - (startTick1 >> 0); // Unsigned 32 bit arithmetic
       console.log("Ultraljud 1: ", diff1 / 2 / MICROSECDONDS_PER_CM);
       distance1 = diff1 / 2 / MICROSECDONDS_PER_CM;
-  if (distance1 - distance2 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50) {
-    for (var i = 0; i < numOfBolts-2; i++) {
-      if (bolts[i]) bolts[i].roll(80, 0, []);
-    }	 		
-  } 
-  else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50) {
+  if (distance1 - distance2 > 10 && distance1 > 20 && distance1 < 100 && distance2 > 20 && distance2 < 100) {
     for (var i = 2; i < numOfBolts; i++) {
       if (bolts[i]) bolts[i].roll(80, 0, []);
+    }
+    for (var i = 0; i < numOfBolts-2; i++) {
+      if (bolts[i]) bolts[i].roll(255, 0, []);
+    }	 		
+  } 
+  else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 100 && distance2 > 20 && distance2 < 100) {
+    for (var i = 0; i < numOfBolts-2; i++) {
+      if (bolts[i]) bolts[i].roll(80, 0, []);
+    }	
+    for (var i = 2; i < numOfBolts; i++) {
+      if (bolts[i]) bolts[i].roll(255, 0, []);
     }	 		
   }	
-  else if (distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50) {
+  else if (distance1 > 20 && distance1 < 100 && distance2 > 20 && distance2 < 100) {
     for (var i = 0; i < numOfBolts; i++) {
-        if (bolts[i]) bolts[i].roll(80, 0, []);
+        if (bolts[i]) bolts[i].roll(255, 0, []);
       }	 
   }
     }
@@ -113,17 +116,24 @@ const watchHCSR04 = () => {
       distance2 = diff2 / 2 / MICROSECDONDS_PER_CM;	
       if (distance1 - distance2 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50) {
         for (var i = 0; i < numOfBolts-2; i++) {
+          if (bolts[i]) bolts[i].roll(255, 0, []);
+        }
+        for (var i = 2; i < numOfBolts; i++) {
           if (bolts[i]) bolts[i].roll(80, 0, []);
-        }	 		
+        }
+	 		
       } 
       else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50) {
         for (var i = 2; i < numOfBolts; i++) {
+          if (bolts[i]) bolts[i].roll(255, 0, []);
+        }
+        for (var i = 0; i < numOfBolts-2; i++) {
           if (bolts[i]) bolts[i].roll(80, 0, []);
         }	 		
       }	
       else if (distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50) {
         for (var i = 0; i < numOfBolts; i++) {
-            if (bolts[i]) bolts[i].roll(80, 0, []);
+            if (bolts[i]) bolts[i].roll(255, 0, []);
           }	 
       }
         }	
@@ -136,5 +146,7 @@ watchHCSR04();
 
 // Trigger a distance measurement once per second
 setInterval(() => {
+  //var controller = gamepad.deviceAtIndex(0);
+  //if(controller) { console.log(controller);}	
   trigger1.trigger(10, 1); // Set trigger high for 10 microseconds
 }, 1000);

@@ -126,7 +126,7 @@ const watchHCSR04 = () => {
       if (bolts[i]) bolts[i].roll(maxSpeed, 0, []); 
     }	
   }
-}
+};
 
 watchHCSR04();
 

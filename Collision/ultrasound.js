@@ -1,9 +1,19 @@
 const { Scanner, Utils, SpheroBolt } = require("spherov2.js");
 const Gpio = require('pigpio').Gpio;
+const gamepad = require("gamepad");
 
 gamepad.init(); 							// Initialize the library
 setInterval(gamepad.processEvents, 16); 	// Create a game loop and poll for events
 setInterval(gamepad.detectDevices, 5000);	// Scan for new gamepads as a slower rate
+
+const BUTTONS = {
+	A: 0,
+	B: 1,
+	X: 2,
+	Y: 3,
+	CHANGE_VIEW: 6,
+	MENU: 7
+};
 
 // Initiera bollarna
 const boltNames = ["SB-5AEB"];
@@ -57,6 +67,8 @@ const MICROSECDONDS_PER_CM = 1e6/34321;
 const trigger1 = new Gpio(23, {mode: Gpio.OUTPUT});
 const echo1 = new Gpio(24, {mode: Gpio.INPUT, alert: true});
 const echo2 = new Gpio(27, {mode: Gpio.INPUT, alert: true});
+var distance1 = 0;
+var distance2 = 0;
 
 trigger1.digitalWrite(0); // Make sure trigger is low
 
@@ -71,6 +83,16 @@ const watchHCSR04 = () => {
       const endTick1 = tick1;
       const diff1 = (endTick1 >> 0) - (startTick1 >> 0); // Unsigned 32 bit arithmetic
       console.log("Ultraljud 1: ", diff1 / 2 / MICROSECDONDS_PER_CM);
+      distance1 = diff1 / 2 / MICROSECDONDS_PER_CM;
+  if (distance1 < 10 || distance2 < 10) {
+    for (var i = 0; i < numOfBolts; i++) {
+      if (bolts[i]) bolts[i].roll(0, 0, []);
+    }	 		
+  } else {
+    for (var i = 0; i < numOfBolts; i++) {
+      if (bolts[i]) bolts[i].roll(80, 0, []);
+    }		
+  }		
     }
   });
 
@@ -81,17 +103,20 @@ const watchHCSR04 = () => {
       const endTick2 = tick2;
       const diff2 = (endTick2 >> 0) - (startTick2 >> 0); // Unsigned 32 bit arithmetic
       console.log("Ultraljud 2: ", diff2 / 2 / MICROSECDONDS_PER_CM);
-    }
-  });
-  if ((diff1 / 2 / MICROSECDONDS_PER_CM) < 10 || diff2 / 2 / MICROSECDONDS_PER_CM < 10) {
+      distance2 = diff2 / 2 / MICROSECDONDS_PER_CM;	
+      if (distance1 < 10 || distance2 < 10) {
     for (var i = 0; i < numOfBolts; i++) {
       if (bolts[i]) bolts[i].roll(0, 0, []);
-    }	 		
-  } else {
+      }	 		
+    } else {
     for (var i = 0; i < numOfBolts; i++) {
       if (bolts[i]) bolts[i].roll(80, 0, []);
-    }		
-  }		
+      }		
+    }	
+  }
+});
+  	
+	
 };
 
 watchHCSR04();
