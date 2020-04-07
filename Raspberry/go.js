@@ -1,5 +1,7 @@
-const { Scanner, Utils, SpheroBolt } = require("spherov2.js");
+const { Scanner, Utils, SpheroBolt} = require("spherov2.js");
 const gamepad = require("gamepad");
+import { Event, Utils, ICommandWithRaw, RollableToy } from 'spherov2.js';
+
  
 gamepad.init(); 							// Initialize the library
 setInterval(gamepad.processEvents, 16); 	// Create a game loop and poll for events
@@ -53,7 +55,14 @@ gamepad.on("down", async function(id, n) {
 		}
 		
 	}
-	else if (n == BUTTONS.A) {}
+	else if (n == BUTTONS.A) {
+		for(var i = 0; i < numOfBolts; i++) {
+		await bolts[i].configureSensorStream();
+		bolts[i].on(Event.onSensor, (command: ICommandWithRaw) => {
+			console.log('onSensor', command);
+		  });
+		}
+	}
 	else if (n == BUTTONS.B) {}
 	else if (n == BUTTONS.X) {}
 	else if (n == BUTTONS.Y) {}
@@ -62,6 +71,7 @@ gamepad.on("down", async function(id, n) {
 
 setInterval(function() {
 	var controller = gamepad.deviceAtIndex(0);
+		
 	
 	for (var i = 0; i < numOfBolts; i++) {
 		if (controller) {
