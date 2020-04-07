@@ -1,12 +1,13 @@
 const { Scanner, Utils, SpheroBolt } = require("spherov2.js");
 const Gpio = require('pigpio').Gpio;
+const gamepad = require("gamepad");
 
-gamepad.init(); 							// Initialize the library
+gamepad.init(); 				// Initialize the library
 setInterval(gamepad.processEvents, 16); 	// Create a game loop and poll for events
 setInterval(gamepad.detectDevices, 5000);	// Scan for new gamepads as a slower rate
 
 // Initiera bollarna
-const boltNames = ["SB-5AEB"];  /* first two bolts it the bolts to the right, the last two is the bolts to the left*/
+const boltNames = ["SB-5AEB", "SB-AE48", "SB-048E", "SB-C7AA"];  /* first two bolts it the bolts to the right, the last two is the bolts to the left*/
 const numOfBolts = boltNames.length;
 var bolts = Array(numOfBolts);
 
@@ -15,6 +16,15 @@ var bolts = Array(numOfBolts);
  * Max speed of the Bolt is 2 m/s which should respond to value 255.
  */
 var maxSpeed = 120;
+
+const BUTTONS = {
+	A: 0,
+	B: 1,
+	X: 2,
+	Y: 3,
+	CHANGE_VIEW: 6,
+	MENU: 7
+};
 
 gamepad.on("down", async function(id, n) {
 	console.log("down", n);
@@ -60,6 +70,9 @@ const echo2 = new Gpio(27, {mode: Gpio.INPUT, alert: true});
 
 trigger1.digitalWrite(0); // Make sure trigger is low
 
+var diff1 = 0;
+var diff2 = 0;
+
 const watchHCSR04 = () => {
   let startTick1;
   let startTick2; 	
@@ -69,7 +82,7 @@ const watchHCSR04 = () => {
       startTick1 = tick1;
     } else {
       const endTick1 = tick1;
-      const diff1 = (endTick1 >> 0) - (startTick1 >> 0); // Unsigned 32 bit arithmetic
+      diff1 = (endTick1 >> 0) - (startTick1 >> 0); // Unsigned 32 bit arithmetic
       console.log("Ultraljud 1: ", diff1 / 2 / MICROSECDONDS_PER_CM);
     }
   });
@@ -79,18 +92,18 @@ const watchHCSR04 = () => {
       startTick2 = tick2;
     } else {
       const endTick2 = tick2;
-      const diff2 = (endTick2 >> 0) - (startTick2 >> 0); // Unsigned 32 bit arithmetic
+      diff2 = (endTick2 >> 0) - (startTick2 >> 0); // Unsigned 32 bit arithmetic
       console.log("Ultraljud 2: ", diff2 / 2 / MICROSECDONDS_PER_CM);
     }
   });
 
-  var right_sensors = diff1 / 2 / MICROSECDONDS_PER_CM
-  var left_sensors = diff2 / 2 / MICROSECDONDS_PER_CM
+  var right_sensors = diff1 / 2 / MICROSECDONDS_PER_CM;
+  var left_sensors = diff2 / 2 / MICROSECDONDS_PER_CM;
   if ((right_sensors + left_sensors)/2 > 40) { /* 40 must eventually change after testing */
-  	 maxSpeed *= 1.2; /* 1.2 must eventually change after testing */  		
+  	 maxSpeed = 160 /* 1.2 must eventually change after testing */  		
   }
   else if ((right_sensors + left_sensors)/2 < 10) { /* 40 must eventually change after testing */
-  	 maxSpeed *= 0.8; /* 1.2 must eventually change after testing */
+  	 maxSpeed = 80; /* 1.2 must eventually change after testing */
   }
   else  { 
   	 maxSpeed = 120; /* 1.2 must eventually change after testing */
@@ -113,6 +126,7 @@ const watchHCSR04 = () => {
       if (bolts[i]) bolts[i].roll(maxSpeed, 0, []); 
     }	
   }
+}
 
 watchHCSR04();
 
