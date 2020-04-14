@@ -18,14 +18,14 @@ const BUTTONS = {
 };
  
 
-const boltNames = ["SB-C7AA", "SB-AE48" /*"SB-5AEB"*/];
+const boltNames = ["SB-5AEB", "SB-048E", "SB-C7AA", "SB-AE48"];
 const numOfBolts = boltNames.length;
 
 /*
  * Max speed can be set to anything between 0 - 255.
  * Max speed of the Bolt is 2 m/s which should respond to value 255.
  */
-const maxSpeed = 120;
+const maxSpeed = 255;
 
 var bolts = Array(numOfBolts);
 
@@ -34,12 +34,11 @@ gamepad.on("down", async function(id, n) {
 	
 	if (n == BUTTONS.CHANGE_VIEW) {
 		// Connect
-		console.log("test1") 
 		for (var i = 0; i < numOfBolts; i++) {
 			if (!bolts[i]) {
-				console.log("test2") 
+				console.log("Connecting") 
 				bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
-				console.log("test3") 
+				console.log(i) 
 			}
 			// bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
 		}
@@ -57,13 +56,14 @@ gamepad.on("down", async function(id, n) {
 		
 	}
 	else if (n == BUTTONS.A) {
-		for(var i = 0; i < numOfBolts; i++) {
-		    bolts[i].configureSensorStream();
-		 /* bolts[i].on(Event.onSensor, (command: ICommandWithRaw) => {
+		/*for(var i = 0; i < numOfBolts; i++) {
+		 *   bolts[i].configureSensorStream();
+		 * bolts[i].on(Event.onSensor, (command: ICommandWithRaw) => {
 		 * 	console.log('onSensor', command);
 		 *  });
-		 */ 
-		}
+		 * 
+		 * }
+		*/	
 		 	
 	}
 	else if (n == BUTTONS.B) {
@@ -76,6 +76,11 @@ gamepad.on("down", async function(id, n) {
 	else if (n == BUTTONS.Y) {}
 	
 });
+var angle_left = 0; 	
+var angle_right = [0, 90, 180, 270];
+//for (var i = 0; i < numOfBolts; i++) {
+//	angle_right[i] = ;
+//}	 
 
 setInterval(function() {
 	var controller = gamepad.deviceAtIndex(0);
@@ -101,29 +106,38 @@ setInterval(function() {
 			if (Math.abs(x_right) < 0.25) x_right = 0;
 			if (Math.abs(y_right) < 0.25) y_right = 0;
 			
-	
+			 
 			var speed = Math.trunc(Math.sqrt(x_left*x_left+y_left*y_left) * maxSpeed);
+			if (x_left == 0 && y_left == 0) {
+				speed = Math.trunc(Math.sqrt(x_right*x_right+y_right*y_right) * maxSpeed * 0.2);
+			} 			
 			//var angle = Math.trunc((Math.atan2(y_left, x_left) * 180 / Math.PI + 90 + 360) % 360);
 
 			// Send roll command to all bolts
 			if (bolts[i]) { 
-				var angle_left = 0; 	
-				var angle_right = 0;
 				if (Math.abs(x_left) > 0 || Math.abs(y_left) > 0) {  
 				angle_left = Math.trunc((Math.atan2(y_left, x_left) * 180 / Math.PI + 90 + 360) % 360);
 				}
 				if (Math.abs(x_right) > 0) {			
 					if (x_right > 0) {
-						angle_right += 90*i-10;   			
+						angle_right[i] -= 5;   			
 					} 
 					if (x_right < 0) {
-						angle_right += 90*i+10;
-					} 
+						angle_right[i] += 5;
+					}
+ 							
 				}  
-				var angle = (angle_left + angle_right) % 360; 
+				if (x_right == 0) { 	 
+				//angle_right[i] = 0; 
+					var angle = (angle_left) % 360;	
+				}
+				else{
+					var angle = (angle_left + angle_right[i]) % 360;
+				} 
+				//console.log(angle);
 				bolts[i].roll(speed, angle, []);
 			}
 		}
 	}
 	
-}, 500);
+}, 50);
