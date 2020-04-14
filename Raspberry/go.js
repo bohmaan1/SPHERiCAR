@@ -40,7 +40,6 @@ gamepad.on("down", async function(id, n) {
 				bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
 				console.log("test3") 
 			}
-			// bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
 		}
 	}
 	else if (n == BUTTONS.MENU) {
