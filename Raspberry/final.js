@@ -15,7 +15,7 @@ const BUTTONS = {
     MENU: 7
 };
 
-const boltNames = ["SB-AE48"/*, "SB-5AEB"*/];
+const boltNames = ["SB-5AEB"];
 const numOfBolts = boltNames.length;
 
 /*
@@ -188,8 +188,8 @@ function steering() {
             // Print entire controller (for debugging)
             //console.log(controller);
 
-            var x = controller.axisStates[3 * i + 0];
-            var y = controller.axisStates[3 * i + 1];
+            var x = controller.axisStates[0];
+            var y = controller.axisStates[1];
 
 			/*
 			 * Allow for a dead zone in the center as
