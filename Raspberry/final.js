@@ -163,7 +163,7 @@ const watchHCSR04 = () => {
             distance2 = diff2 / 2 / MICROSECDONDS_PER_CM;
 
             // Anti-collision
-            if ((distance1 < 10 || distance2 < 10) && antiCollisionActive) {
+            if ((distance1 < 20 || distance2 < 20) && antiCollisionActive) {
                 for (var i = 0; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(0, 0, []);
                 }
@@ -222,7 +222,10 @@ function steering() {
             var angle = Math.trunc((Math.atan2(y, x) * 180 / Math.PI + 90 + 360) % 360);
 
             // Send roll command to all bolts
-            if ((distance1 > 10 && distance2 > 10)) {
+            if (distance1 > 20 && distance2 > 20 && antiCollisionActive) {
+                if (bolts[i]) bolts[i].roll(speed, angle, []);
+            } 
+            else if (!antiCollisionActive) {
                 if (bolts[i]) bolts[i].roll(speed, angle, []);
             }
         }
