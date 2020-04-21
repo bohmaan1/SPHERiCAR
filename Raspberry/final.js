@@ -60,29 +60,28 @@ gamepad.on("down", async function (id, n) {
 
     // Manual steering
     else if (n == BUTTONS.A) {
-        if (bolts[i]) {
             if ((a_count % 2) == 0) {
                 interval2 = setInterval(steering, 50);
                 console.log("Manual steering on")
                 a_count++;
             }
-            if ((a_count % 2) == 1) {
+            else if ((a_count % 2) == 1) {
                 clearInterval(interval2)
                 console.log("Manual steering off")
                 a_count++;
             }
-        }
     }
 
 
     // Anti-collision
     else if (n == BUTTONS.B) {
         if ((b_count % 2) == 0) {
-            interval = setInterval(collision, 1000);
+		console.log("test");
+            interval = setInterval(trigger, 1000);
             console.log("Anti-collision on");
             b_count++;
         }
-        if ((b_count % 2) == 1) {
+        else if ((b_count % 2) == 1) {
             clearInterval(interval);
             console.log("Anti-collision off");
             b_count++;
@@ -92,11 +91,11 @@ gamepad.on("down", async function (id, n) {
     // Follow-the-leader
     else if (n == BUTTONS.X) {
         if ((x_count % 2) == 0) {
-            interval = setInterval(collision, 1000);
+            interval = setInterval(trigger, 1000);
             console.log("Follow-the-leader on");
             x_count++;
         }
-        if ((x_count % 2) == 1) {
+        else if ((x_count % 2) == 1) {
             clearInterval(interval);
             console.log("Follow-the-leader off");
             x_count++;
