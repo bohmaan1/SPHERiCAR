@@ -31,6 +31,7 @@ var b_count = 0;
 var x_count = 0;
 var y_count = 0;
 var interval = null;
+var interval2 = null;
 
 gamepad.on("down", async function (id, n) {
     console.log("down", n);
@@ -62,11 +63,11 @@ gamepad.on("down", async function (id, n) {
     // Manual steering
     else if (n == BUTTONS.A) {
         if ((a_count % 2) == 0) {
-            interval = setInterval(steering, 50);
+            interval2 = setInterval(steering, 50);
             a_count++;
         }
         if ((a_count % 2) == 1) {
-            clearInterval(interval)
+            clearInterval(interval2)
             a_count++;
         }
     }
@@ -174,7 +175,7 @@ const watchHCSR04 = () => {
 
 watchHCSR04();
 
-function trigger() {
+function steering() {
     var controller = gamepad.deviceAtIndex(0);
 
 
@@ -209,4 +210,4 @@ function trigger() {
 
 function trigger() {
     trigger1.trigger(10, 1); // Set trigger high for 10 microseconds
-};
+}
