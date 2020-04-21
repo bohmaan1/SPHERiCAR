@@ -47,15 +47,12 @@ gamepad.on("down", async function (id, n) {
                     ballCount++;
                 }
             }
-        }
-        else {
+        } else {
             console.log("All avalaible Sphero Bolts are already connected");
-
         }
     }
 
     else if (n == BUTTONS.MENU) {
-
         // Sleep and disconnect
         for (var i = 0; i < numOfBolts; i++) {
             if (bolts[i]) {
@@ -185,16 +182,14 @@ const watchHCSR04 = () => {
                 for (var i = 2; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(80, 0, []);
                 }
-            }
-            else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
+            } else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
                 for (var i = 2; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(255, 0, []);
                 }
                 for (var i = 0; i < numOfBolts - 2; i++) {
                     if (bolts[i]) bolts[i].roll(80, 0, []);
                 }
-            }
-            else if (distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
+            } else if (distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
                 for (var i = 0; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(255, 0, []);
                 }
@@ -208,10 +203,8 @@ watchHCSR04();
 function steering() {
     var controller = gamepad.deviceAtIndex(0);
 
-
     for (var i = 0; i < numOfBolts; i++) {
         if (controller) {
-            // Print entire controller (for debugging)
             //console.log(controller);
 
             var x = controller.axisStates[0];
@@ -228,11 +221,7 @@ function steering() {
             var speed = Math.trunc(Math.sqrt(x * x + y * y) * maxSpeed);
             var angle = Math.trunc((Math.atan2(y, x) * 180 / Math.PI + 90 + 360) % 360);
 
-            // Print (x, y) values (for debugging)
-            //console.log("(" + x + ", " + y + ")");
-
             // Send roll command to all bolts
-            //for (var i = 0; i < numOfBolts; i++) if (bolts[i]) bolts[i].roll(speed, angle, []);
             if ((distance1 > 10 && distance2 > 10)) {
                 if (bolts[i]) bolts[i].roll(speed, angle, []);
             }
