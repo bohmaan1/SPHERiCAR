@@ -38,36 +38,36 @@ gamepad.on("down", async function (id, n) {
 
     if (n == BUTTONS.CHANGE_VIEW) {
         // Connect
-        console.log("test1")
+        console.log("Attempting to connect " + boltNames.length + " Sphero Bolts");
         for (var i = 0; i < numOfBolts; i++) {
             if (!bolts[i]) {
-                console.log("test2")
+                console.log("Connecting Sphero bolt: " + (i + 1));
                 bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
-                console.log("test3")
+                console.log("Connected Sphero Bolt: " + (i + 1));
             }
         }
     }
-    else if (n == BUTTONS.MENU) {
-        // Sleep and disconnect
 
+    else if (n == BUTTONS.MENU) {
+
+        // Sleep and disconnect
         for (var i = 0; i < numOfBolts; i++) {
             if (bolts[i]) {
-
                 //bolts[i].sleep();
-
             }
         }
-
     }
 
     // Manual steering
     else if (n == BUTTONS.A) {
         if ((a_count % 2) == 0) {
             interval2 = setInterval(steering, 50);
+            console.log("Manual steering on")
             a_count++;
         }
         if ((a_count % 2) == 1) {
             clearInterval(interval2)
+            console.log("Manual steering off")
             a_count++;
         }
     }
@@ -77,10 +77,12 @@ gamepad.on("down", async function (id, n) {
     else if (n == BUTTONS.B) {
         if ((b_count % 2) == 0) {
             interval = setInterval(collision, 1000);
+            console.log("Anti-collision on");
             b_count++;
         }
         if ((b_count % 2) == 1) {
             clearInterval(interval);
+            console.log("Anti-collision off");
             b_count++;
         }
     }
@@ -89,10 +91,12 @@ gamepad.on("down", async function (id, n) {
     else if (n == BUTTONS.X) {
         if ((x_count % 2) == 0) {
             interval = setInterval(collision, 1000);
+            console.log("Follow-the-leader on");
             x_count++;
         }
         if ((x_count % 2) == 1) {
             clearInterval(interval);
+            console.log("Follow-the-leader off");
             x_count++;
         }
     }
