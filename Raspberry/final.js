@@ -60,15 +60,17 @@ gamepad.on("down", async function (id, n) {
 
     // Manual steering
     else if (n == BUTTONS.A) {
-        if ((a_count % 2) == 0) {
-            interval2 = setInterval(steering, 50);
-            console.log("Manual steering on")
-            a_count++;
-        }
-        if ((a_count % 2) == 1) {
-            clearInterval(interval2)
-            console.log("Manual steering off")
-            a_count++;
+        if (bolts[i]) {
+            if ((a_count % 2) == 0) {
+                interval2 = setInterval(steering, 50);
+                console.log("Manual steering on")
+                a_count++;
+            }
+            if ((a_count % 2) == 1) {
+                clearInterval(interval2)
+                console.log("Manual steering off")
+                a_count++;
+            }
         }
     }
 
