@@ -17,6 +17,7 @@ const BUTTONS = {
 
 const boltNames = ["SB-5AEB"];
 const numOfBolts = boltNames.length;
+var ballCount = 0;
 
 /*
  * Max speed can be set to anything between 0 - 255.
@@ -37,16 +38,22 @@ gamepad.on("down", async function (id, n) {
     console.log("down", n);
 
     if (n == BUTTONS.CHANGE_VIEW) {
-        // Connect
+        if(!(ballCount == numOfBolts) ){
         console.log("Attempting to connect " + boltNames.length + " Sphero Bolts");
         for (var i = 0; i < numOfBolts; i++) {
             if (!bolts[i]) {
                 console.log("Connecting Sphero bolt: " + (i + 1));
                 bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
                 console.log("Connected Sphero Bolt: " + (i + 1));
+		ballCount++;
             }
         }
     }
+	else {
+	console.log("All avalaible Sphero Bolts are already connected");
+
+}
+}
 
     else if (n == BUTTONS.MENU) {
 
@@ -60,6 +67,7 @@ gamepad.on("down", async function (id, n) {
 
     // Manual steering
     else if (n == BUTTONS.A) {
+	if(bolts[0]) {
             if ((a_count % 2) == 0) {
                 interval2 = setInterval(steering, 50);
                 console.log("Manual steering on")
@@ -71,7 +79,7 @@ gamepad.on("down", async function (id, n) {
                 a_count++;
             }
     }
-
+}
 
     // Anti-collision
     else if (n == BUTTONS.B) {
