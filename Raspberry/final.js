@@ -27,10 +27,6 @@ const maxSpeed = 120;
 
 var bolts = Array(numOfBolts);
 
-var a_count = 0;
-var b_count = 0;
-var x_count = 0;
-var y_count = 0;
 var interval = null;
 var interval2 = null;
 var antiCollisionActive = false;
@@ -71,7 +67,10 @@ gamepad.on("down", async function (id, n) {
     // Manual steering
     else if (n == BUTTONS.A) {
         if (bolts[0]) {
-            if (!manualSteeringActive) {
+            if (followTheLeaderActive) {
+                console.log("Unactivate follow-the-leader");
+            }
+            else if (!manualSteeringActive) {
                 interval2 = setInterval(steering, 200);
                 console.log("Manual steering on")
                 manualSteeringActive = true;
@@ -86,33 +85,49 @@ gamepad.on("down", async function (id, n) {
 
     // Anti-collision
     else if (n == BUTTONS.B) {
-        if (!antiCollisionActive) {
-            interval = setInterval(trigger, 1000);
-            console.log("Anti-collision on");
-            antiCollisionActive = true;
-        }
-        else if (antiCollisionActive) {
-            clearInterval(interval);
-            console.log("Anti-collision off");
-            antiCollisionActive = false;
+        if (bolts[0]) {
+            if (followTheLeaderActive) {
+                console.log("Turn off follow-the-leader");
+            }
+            else if (!antiCollisionActive) {
+                interval = setInterval(trigger, 1000);
+                console.log("Anti-collision on");
+                antiCollisionActive = true;
+            }
+            else if (antiCollisionActive) {
+                clearInterval(interval);
+                console.log("Anti-collision off");
+                antiCollisionActive = false;
+            }
         }
     }
 
     // Follow-the-leader
     else if (n == BUTTONS.X) {
-        if (!followTheLeaderActive) {
-            interval = setInterval(trigger, 1000);
-            console.log("Follow-the-leader on");
-            followTheLeaderActive = true;
-        }
-        else if (followTheLeaderActive) {
-            clearInterval(interval);
-            console.log("Follow-the-leader off");
-            followTheLeaderActive = false;
+        if (bolts[0]) {
+            if (antiCollisionActive && manualSteeringActive) {
+                console.log("Turn off manual steering and anti-collision");
+            }
+            else if (antiCollisionActive) {
+                console.log("Turn off anti-collision");
+            }
+            else if (manualSteeringActive) {
+                console.log("Turn off manual steering");
+            }
+            else if (!followTheLeaderActive) {
+                interval = setInterval(trigger, 1000);
+                console.log("Follow-the-leader on");
+                followTheLeaderActive = true;
+            }
+            else if (followTheLeaderActive) {
+                clearInterval(interval);
+                console.log("Follow-the-leader off");
+                followTheLeaderActive = false;
+            }
         }
     }
-    else if (n == BUTTONS.Y) { }
 
+    else if (n == BUTTONS.Y) { }
 });
 
 // The number of microseconds it takes sound to travel 1cm at 20 degrees celcius
