@@ -93,7 +93,7 @@ gamepad.on("down", async function (id, n) {
         }
         else if (antiCollisionActive) {
             clearInterval(interval);
-            console.log("Anti-collision off");            
+            console.log("Anti-collision off");
             antiCollisionActive = false;
         }
     }
@@ -151,19 +151,19 @@ const watchHCSR04 = () => {
             distance2 = diff2 / 2 / MICROSECDONDS_PER_CM;
 
             // Anti-collision
-            if ((distance1 < 10 || distance2 < 10) && (b_count % 2) == 1) {
+            if ((distance1 < 10 || distance2 < 10) && antiCollisionActive) {
                 for (var i = 0; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(0, 0, []);
                 }
             }
-            else if ((b_count % 2) == 1) {
+            else if (antiCollisionActive && !manualSteeringActive) {
                 for (var i = 0; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(120, 0, []);
                 }
             }
 
             // Follow the leader
-            else if (distance1 - distance2 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && (x_count % 2) == 1) {
+            else if (distance1 - distance2 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
                 for (var i = 0; i < numOfBolts - 2; i++) {
                     if (bolts[i]) bolts[i].roll(255, 0, []);
                 }
@@ -171,7 +171,7 @@ const watchHCSR04 = () => {
                     if (bolts[i]) bolts[i].roll(80, 0, []);
                 }
             }
-            else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && (x_count % 2) == 1) {
+            else if (distance2 - distance1 > 10 && distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
                 for (var i = 2; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(255, 0, []);
                 }
@@ -179,7 +179,7 @@ const watchHCSR04 = () => {
                     if (bolts[i]) bolts[i].roll(80, 0, []);
                 }
             }
-            else if (distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && (x_count % 2) == 1) {
+            else if (distance1 > 20 && distance1 < 50 && distance2 > 20 && distance2 < 50 && followTheLeaderActive) {
                 for (var i = 0; i < numOfBolts; i++) {
                     if (bolts[i]) bolts[i].roll(255, 0, []);
                 }
@@ -218,7 +218,9 @@ function steering() {
 
             // Send roll command to all bolts
             //for (var i = 0; i < numOfBolts; i++) if (bolts[i]) bolts[i].roll(speed, angle, []);
-            if (bolts[i]) bolts[i].roll(speed, angle, []);
+            if ((distance1 > 10 && distance2 > 10)) {
+                if (bolts[i]) bolts[i].roll(speed, angle, []);
+            }
         }
     }
 }
