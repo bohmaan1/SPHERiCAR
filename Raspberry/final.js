@@ -33,27 +33,30 @@ var x_count = 0;
 var y_count = 0;
 var interval = null;
 var interval2 = null;
+var antiCollisionActive = false;
+var manualSteeringActive = false;
+var followTheLeaderActive = false;
 
 gamepad.on("down", async function (id, n) {
     console.log("down", n);
 
     if (n == BUTTONS.CHANGE_VIEW) {
-        if(!(ballCount == numOfBolts) ){
-        console.log("Attempting to connect " + boltNames.length + " Sphero Bolts");
-        for (var i = 0; i < numOfBolts; i++) {
-            if (!bolts[i]) {
-                console.log("Connecting Sphero bolt: " + (i + 1));
-                bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
-                console.log("Connected Sphero Bolt: " + (i + 1));
-		ballCount++;
+        if (!(ballCount == numOfBolts)) {
+            console.log("Attempting to connect " + boltNames.length + " Sphero Bolts");
+            for (var i = 0; i < numOfBolts; i++) {
+                if (!bolts[i]) {
+                    console.log("Connecting Sphero bolt: " + (i + 1));
+                    bolts[i] = await Scanner.find(SpheroBolt.advertisement, boltNames[i]);
+                    console.log("Connected Sphero Bolt: " + (i + 1));
+                    ballCount++;
+                }
             }
         }
-    }
-	else {
-	console.log("All avalaible Sphero Bolts are already connected");
+        else {
+            console.log("All avalaible Sphero Bolts are already connected");
 
-}
-}
+        }
+    }
 
     else if (n == BUTTONS.MENU) {
 
@@ -67,46 +70,45 @@ gamepad.on("down", async function (id, n) {
 
     // Manual steering
     else if (n == BUTTONS.A) {
-	if(bolts[0]) {
-            if ((a_count % 2) == 0) {
-                interval2 = setInterval(steering, 50);
+        if (bolts[0]) {
+            if (!manualSteeringActive) {
+                interval2 = setInterval(steering, 100);
                 console.log("Manual steering on")
-                a_count++;
+                manualSteeringActive = true;
             }
-            else if ((a_count % 2) == 1) {
+            else if (manualSteeringActive) {
                 clearInterval(interval2)
                 console.log("Manual steering off")
-                a_count++;
+                manualSteeringActive = false;
             }
+        }
     }
-}
 
     // Anti-collision
     else if (n == BUTTONS.B) {
-        if ((b_count % 2) == 0) {
-		console.log("test");
-            interval = setInterval(trigger, 1000);
+        if (!antiCollisionActive) {
+            interval = setInterval(trigger, 100);
             console.log("Anti-collision on");
-            b_count++;
+            antiCollisionActive = true;
         }
-        else if ((b_count % 2) == 1) {
+        else if (antiCollisionActive) {
             clearInterval(interval);
-            console.log("Anti-collision off");
-            b_count++;
+            console.log("Anti-collision off");            
+            antiCollisionActive = false;
         }
     }
 
     // Follow-the-leader
     else if (n == BUTTONS.X) {
-        if ((x_count % 2) == 0) {
-            interval = setInterval(trigger, 1000);
+        if (!followTheLeaderActive) {
+            interval = setInterval(trigger, 100);
             console.log("Follow-the-leader on");
-            x_count++;
+            followTheLeaderActive = true;
         }
-        else if ((x_count % 2) == 1) {
+        else if (followTheLeaderActive) {
             clearInterval(interval);
             console.log("Follow-the-leader off");
-            x_count++;
+            followTheLeaderActive = false;
         }
     }
     else if (n == BUTTONS.Y) { }
@@ -156,7 +158,7 @@ const watchHCSR04 = () => {
             }
             else if ((b_count % 2) == 1) {
                 for (var i = 0; i < numOfBolts; i++) {
-                    if (bolts[i]) bolts[i].roll(80, 0, []);
+                    if (bolts[i]) bolts[i].roll(120, 0, []);
                 }
             }
 
